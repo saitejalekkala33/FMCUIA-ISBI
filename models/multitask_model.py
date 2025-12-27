@@ -1,10 +1,33 @@
 from typing import Dict, List, Optional
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from models.backbone_qwen_vl import QwenVLBackbone
 from models.heads import SegmentationHead, ClassificationHead, RegressionHead, DetectionGridHead
 from losses import segmentation_loss, classification_loss, regression_loss, detection_grid_loss
+
+
+class UncertaintyLossBalancer(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.raw = nn.ParameterDict(
+            {
+                "segmentation": nn.Parameter(torch.zeros(())),
+                "detection": nn.Parameter(torch.zeros(())),
+                "classification": nn.Parameter(torch.zeros(())),
+                "regression": nn.Parameter(torch.zeros(())),
+            }
+        )
+
+    def forward(self, task_name: str, loss: torch.Tensor) -> torch.Tensor:
+        k = str(task_name).lower()
+        if k == "regression":
+            k = "regression"
+        if k not in self.raw:
+            k = "classification"
+        sigma = 1.0 + F.softplus(self.raw[k])
+        return loss / (2.0 * sigma * sigma) + torch.log(sigma)
 
 
 class MultiTaskModel(nn.Module):
@@ -23,9 +46,9 @@ class MultiTaskModel(nn.Module):
         super().__init__()
         self.task_configs = task_configs
 
-        seg_classes = [cfg["num_classes"] for cfg in task_configs.values() if cfg["task_name"] == "segmentation"]
-        cls_classes = [cfg["num_classes"] for cfg in task_configs.values() if cfg["task_name"] == "classification"]
-        reg_points = [cfg["num_classes"] for cfg in task_configs.values() if cfg["task_name"] == "Regression"]
+        seg_classes = [int(cfg["num_classes"]) for cfg in task_configs.values() if cfg["task_name"] == "segmentation"]
+        cls_classes = [int(cfg["num_classes"]) for cfg in task_configs.values() if cfg["task_name"] == "classification"]
+        reg_points = [int(cfg["num_classes"]) for cfg in task_configs.values() if cfg["task_name"] == "Regression"]
 
         self.max_seg_classes = max(seg_classes) if seg_classes else 2
         self.max_cls_classes = max(cls_classes) if cls_classes else 2
@@ -48,17 +71,7 @@ class MultiTaskModel(nn.Module):
         self.reg_head = RegressionHead(max_dim=self.max_reg_dim)
         self.det_head = DetectionGridHead(fpn_dim=fpn_dim, num_convs=4)
 
-        if torch.cuda.is_available() and load_device.startswith("cuda"):
-            if backbone_dtype is None:
-                self.seg_head.to(load_device)
-                self.cls_head.to(load_device)
-                self.reg_head.to(load_device)
-                self.det_head.to(load_device)
-            else:
-                self.seg_head.to(load_device, dtype=backbone_dtype)
-                self.cls_head.to(load_device, dtype=backbone_dtype)
-                self.reg_head.to(load_device, dtype=backbone_dtype)
-                self.det_head.to(load_device, dtype=backbone_dtype)
+        self.loss_balancer = UncertaintyLossBalancer()
 
     def enable_gradient_checkpointing(self):
         self.backbone.enable_gradient_checkpointing()

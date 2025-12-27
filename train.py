@@ -1,10 +1,5 @@
+# train.py
 import os
-
-os.environ["TRANSFORMERS_NO_TF"] = "1"
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
-
 from collections import defaultdict
 import numpy as np
 import torch
@@ -12,54 +7,53 @@ from torch.utils.data import DataLoader, Subset
 from tqdm import tqdm
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-
-from dataset import MultiTaskDataset, MultiTaskUniformSampler
+from dataset import MultiTaskDataset
+from typing import Dict, Optional
 from models.multitask_model import MultiTaskModel
 from utils.data import build_task_configs_from_dataframe, multitask_collate_fn
 from utils.misc import set_seed, get_autocast_context, get_amp_dtype, save_checkpoint, load_checkpoint
 from val_evaluate import evaluate
 
-DATA_ROOT_PATH = "/root/train/train"
+os.environ["TRANSFORMERS_NO_TF"] = "1"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+os.environ.setdefault("PYTORCH_ALLOC_CONF", "expandable_segments:True")
+
+DATA_ROOT_PATH = "/home/umair_nawaz/TW/train/train"
 VAL_SPLIT = 0.2
-
 FORCE_BACKBONE_IMAGE_SIZE = 448
-
-EPOCHS = 10
-BATCH_SIZE = 1
-GRAD_ACCUM = 16
-
+EPOCHS = 5
+BATCH_SIZE = 8
+GRAD_ACCUM = 2
 HEAD_LR = 2e-4
 BACKBONE_LR = 2e-5
 WEIGHT_DECAY = 0.01
 MAX_GRAD_NORM = 1.0
-
-NUM_WORKERS = 4
+NUM_WORKERS = 8
 PIN_MEMORY = True
-
 SEED = 42
 DETERMINISTIC = False
-
 PRECISION = "bf16"
-GRAD_CHECKPOINT = True
-
+GRAD_CHECKPOINT = False
 MODEL_NAME = "Qwen/Qwen2.5-VL-7B-Instruct"
-TRUST_REMOTE_CODE = True
+TRUST_REMOTE_CODE = False
 ATTN_IMPLEMENTATION = None
-
 KEEP_LLM = False
-LOAD_DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
-
+LOAD_DEVICE = "cuda:6" if torch.cuda.is_available() else "cpu"
 OUTPUT_DIR = "outputs"
 SAVE_NAME_BEST = "best_model.pth"
 SAVE_NAME_LAST = "last_model.pth"
 RESUME_PATH = None
-
 FREEZE_BACKBONE_EPOCHS = 0
 
-W_SEG = 1.0
-W_DET = 1.5
-W_CLS = 1.0
-W_REG = 1.0
+EMA_BETA = 0.98
+DYN_WEIGHT_GAMMA = 0.50
+DYN_WEIGHT_CLAMP = (0.25, 4.0)
+
+SAMPLE_TEMP = 0.70
+SAMPLE_LOSS_BETA = 1.00
+SAMPLE_COUNT_TAU = 0.50
+STEPS_PER_EPOCH = None
 
 
 def resolve_data_root(data_root: str) -> str:
@@ -82,9 +76,10 @@ def build_transforms(is_train: bool, image_size: int, deterministic: bool) -> A.
     t_list = [A.Resize(image_size, image_size)]
     if is_train and not deterministic:
         t_list += [
-            A.RandomBrightnessContrast(p=0.30),
-            A.GaussNoise(var_limit=(5.0, 35.0), p=0.25),
+            A.RandomBrightnessContrast(p=0.35),
+            A.GaussNoise(var_limit=(5.0, 45.0), p=0.30),
             A.GaussianBlur(blur_limit=(3, 5), p=0.20),
+            A.MotionBlur(blur_limit=(3, 5), p=0.10),
         ]
     t_list += [ToTensorV2()]
     return A.Compose(
@@ -113,13 +108,11 @@ def build_optimizer(model: torch.nn.Module):
             backbone_params.append(p)
         else:
             head_params.append(p)
-
     param_groups = []
     if head_params:
         param_groups.append({"params": head_params, "lr": float(HEAD_LR), "weight_decay": float(WEIGHT_DECAY)})
     if backbone_params:
         param_groups.append({"params": backbone_params, "lr": float(BACKBONE_LR), "weight_decay": float(WEIGHT_DECAY)})
-
     try:
         from transformers.optimization import Adafactor
         opt = Adafactor(param_groups, scale_parameter=False, relative_step=False, warmup_init=False)
@@ -152,6 +145,77 @@ def make_stratified_split(df, val_split: float, data_frac: float, seed: int):
     return train_idx, val_idx
 
 
+class MultiTaskTemperatureSampler(torch.utils.data.Sampler):
+    def __init__(
+        self,
+        subset,
+        batch_size: int = 1,
+        steps_per_epoch: int = None,
+        seed: int = 42,
+        temperature: float = 1.0,
+        loss_beta: float = 1.0,
+        count_tau: float = 0.5,
+    ):
+        self.subset = subset
+        self.batch_size = int(batch_size)
+        self.steps_per_epoch = steps_per_epoch
+        self.seed = int(seed)
+        self.temperature = float(temperature)
+        self.loss_beta = float(loss_beta)
+        self.count_tau = float(count_tau)
+        df = getattr(subset, "dataframe", None)
+        if df is None:
+            raise RuntimeError("subset.dataframe is required")
+        self.df = df
+        self.task_ids = sorted(df["task_id"].unique().tolist())
+        self.task_to_indices = {}
+        for tid in self.task_ids:
+            idxs = df.index[df["task_id"] == tid].to_numpy(dtype=np.int64)
+            self.task_to_indices[tid] = idxs
+        self.counts = {tid: float(len(self.task_to_indices[tid])) for tid in self.task_ids}
+        self._rng = np.random.default_rng(self.seed)
+        self._task_probs = self._compute_probs(None)
+
+    def __len__(self):
+        if self.steps_per_epoch is not None:
+            return int(self.steps_per_epoch)
+        return max(1, int(np.ceil(len(self.df) / max(1, self.batch_size))))
+
+    def _compute_probs(self, task_loss_ema: Optional[Dict[str, float]]):
+        eps = 1e-8
+        w = []
+        for tid in self.task_ids:
+            c = self.counts.get(tid, 1.0)
+            cw = (c + eps) ** self.count_tau
+            lw = 1.0
+            if task_loss_ema is not None and tid in task_loss_ema:
+                lw = (float(task_loss_ema[tid]) + eps) ** self.loss_beta
+            w.append(cw * lw)
+        w = np.asarray(w, dtype=np.float64)
+        w = np.maximum(w, eps)
+        t = max(self.temperature, 1e-6)
+        w = w ** (1.0 / t)
+        w = w / (w.sum() + eps)
+        return w
+
+    def update_from_losses(self, task_loss_ema: Dict[str, float]):
+        self._task_probs = self._compute_probs(task_loss_ema)
+
+    def __iter__(self):
+        n_steps = len(self)
+        for _ in range(n_steps):
+            tid = self._rng.choice(self.task_ids, p=self._task_probs)
+            idxs = self.task_to_indices[tid]
+            if len(idxs) == 0:
+                continue
+            if self.batch_size == 1:
+                yield [int(self._rng.choice(idxs))]
+            else:
+                replace = len(idxs) < self.batch_size
+                batch = self._rng.choice(idxs, size=self.batch_size, replace=replace).tolist()
+                yield [int(x) for x in batch]
+
+
 def main():
     import argparse
     parser = argparse.ArgumentParser("FMC_UIA Qwen2.5-VL Multi-task Trainer")
@@ -166,10 +230,9 @@ def main():
         torch.backends.cuda.matmul.allow_tf32 = True
         torch.backends.cudnn.allow_tf32 = True
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device(LOAD_DEVICE if torch.cuda.is_available() else "cpu")
     print(f"[Info] Device: {device}")
     print(f"[Info] Using data root setting: {DATA_ROOT_PATH}")
-
     data_root = resolve_data_root(DATA_ROOT_PATH)
     print(f"[Info] Resolved data root: {data_root}")
 
@@ -220,21 +283,29 @@ def main():
     start_epoch = 0
     best_score = -1e9
 
+    optimizer = build_optimizer(model)
     if RESUME_PATH is not None and os.path.isfile(RESUME_PATH):
-        optimizer = build_optimizer(model)
         start_epoch, best_score = load_checkpoint(RESUME_PATH, model, optimizer, map_location=device)
         print(f"[Resume] Loaded: {RESUME_PATH} (start_epoch={start_epoch}, best_score={best_score:.4f})")
-    else:
-        optimizer = build_optimizer(model)
 
-    train_sampler = MultiTaskUniformSampler(train_subset, batch_size=BATCH_SIZE, steps_per_epoch=None)
+    batch_sampler = MultiTaskTemperatureSampler(
+        train_subset,
+        batch_size=BATCH_SIZE,
+        steps_per_epoch=STEPS_PER_EPOCH,
+        seed=SEED,
+        temperature=SAMPLE_TEMP,
+        loss_beta=SAMPLE_LOSS_BETA,
+        count_tau=SAMPLE_COUNT_TAU,
+    )
 
     train_loader = DataLoader(
         train_subset,
-        batch_sampler=train_sampler,
+        batch_sampler=batch_sampler,
         num_workers=NUM_WORKERS,
         pin_memory=PIN_MEMORY,
         collate_fn=multitask_collate_fn,
+        persistent_workers=(NUM_WORKERS > 0),
+        prefetch_factor=4,
     )
 
     val_loader = DataLoader(
@@ -244,18 +315,16 @@ def main():
         num_workers=NUM_WORKERS,
         pin_memory=PIN_MEMORY,
         collate_fn=multitask_collate_fn,
+        persistent_workers=(NUM_WORKERS > 0),
+        prefetch_factor=4,
     )
 
     amp_dtype = get_amp_dtype(PRECISION)
     use_amp = (device.type == "cuda") and (PRECISION in ["fp16", "bf16"])
-    scaler = torch.amp.GradScaler('cuda', enabled=(use_amp and PRECISION == "fp16"))
+    scaler = torch.amp.GradScaler("cuda", enabled=(use_amp and PRECISION == "fp16"))
 
-    task_type_weights = {
-        "segmentation": W_SEG,
-        "detection": W_DET,
-        "classification": W_CLS,
-        "Regression": W_REG,
-    }
+    ema_loss_by_task = {}
+    ema_mean = 1.0
 
     for epoch in range(start_epoch, EPOCHS):
         if epoch < int(FREEZE_BACKBONE_EPOCHS):
@@ -269,6 +338,7 @@ def main():
 
         pbar = tqdm(train_loader, desc=f"Epoch {epoch+1}/{EPOCHS} [Train]", dynamic_ncols=True)
         step_in_epoch = 0
+
         for step, batch in enumerate(pbar):
             step_in_epoch += 1
             images = batch["images"].to(device, non_blocking=True)
@@ -279,22 +349,33 @@ def main():
             for i, tid in enumerate(task_ids):
                 idx_by_task[tid].append(i)
 
-            total_loss_batch = 0.0
+            total_loss_batch = torch.zeros((), device=device)
 
             with get_autocast_context(enabled=use_amp, dtype=amp_dtype, device_type=device.type):
                 for tid, idxs in idx_by_task.items():
                     cfg = task_configs[tid]
                     task_name = cfg["task_name"]
-
                     imgs_g = images[idxs]
                     lbls_g = [labels_list[i] for i in idxs]
                     targets = torch.stack(lbls_g, dim=0).to(device, non_blocking=True)
 
                     _, loss_dict = model(imgs_g, task_id=tid, labels=targets)
-                    loss = loss_dict["total_loss"]
+                    base_loss = loss_dict["total_loss"]
 
-                    weight = task_type_weights.get(task_name, 1.0)
-                    weighted_loss = loss * float(weight)
+                    cur = float(base_loss.detach().cpu().item())
+                    if tid not in ema_loss_by_task:
+                        ema_loss_by_task[tid] = cur
+                    else:
+                        ema_loss_by_task[tid] = EMA_BETA * float(ema_loss_by_task[tid]) + (1.0 - EMA_BETA) * cur
+
+                    ema_vals = np.asarray(list(ema_loss_by_task.values()), dtype=np.float64)
+                    ema_mean = float(np.mean(ema_vals)) if ema_vals.size > 0 else 1.0
+                    denom = max(ema_mean, 1e-6)
+                    dyn_w = (float(ema_loss_by_task[tid]) / denom) ** float(DYN_WEIGHT_GAMMA)
+                    dyn_w = float(np.clip(dyn_w, DYN_WEIGHT_CLAMP[0], DYN_WEIGHT_CLAMP[1]))
+
+                    scaled_loss = base_loss * dyn_w
+                    weighted_loss = model.loss_balancer(task_name, scaled_loss)
 
                     epoch_train_losses[tid].append(float(weighted_loss.detach().cpu().item()))
                     total_loss_batch = total_loss_batch + weighted_loss
@@ -311,13 +392,11 @@ def main():
                     if scaler.is_enabled():
                         scaler.unscale_(optimizer)
                     torch.nn.utils.clip_grad_norm_(model.parameters(), MAX_GRAD_NORM)
-
                 if scaler.is_enabled():
                     scaler.step(optimizer)
                     scaler.update()
                 else:
                     optimizer.step()
-
                 optimizer.zero_grad(set_to_none=True)
 
             pbar.set_postfix({"loss": float(total_loss_batch.detach().cpu().item())})
@@ -330,7 +409,6 @@ def main():
                 if scaler.is_enabled():
                     scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), MAX_GRAD_NORM)
-
             if scaler.is_enabled():
                 scaler.step(optimizer)
                 scaler.update()
@@ -340,6 +418,11 @@ def main():
 
         pbar.close()
 
+        try:
+            batch_sampler.update_from_losses(ema_loss_by_task)
+        except Exception:
+            pass
+
         print("\n--- Epoch {} Average Train Loss Report ---".format(epoch + 1))
         sorted_task_ids = sorted(epoch_train_losses.keys())
         for task_id in sorted_task_ids:
@@ -348,9 +431,8 @@ def main():
         print("-" * 40)
 
         val_results_df = evaluate(model, val_loader, device)
-
         score_cols = [col for col in val_results_df.columns if "MAE" not in col and isinstance(val_results_df[col].iloc[0], (int, float, np.floating, np.integer))]
-        avg_val_score = 0
+        avg_val_score = 0.0
         if not val_results_df.empty and score_cols:
             avg_val_score = float(val_results_df[score_cols].mean().mean())
 

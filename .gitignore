@@ -38,3 +38,5 @@ htmlcov/
 .mypy_cache/
 .pyright/
 .ruff_cache/
+
+outputs/

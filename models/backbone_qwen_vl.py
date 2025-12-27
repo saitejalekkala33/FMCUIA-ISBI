@@ -1,5 +1,6 @@
 import os
 import gc
+import math
 from typing import Dict, List, Optional, Union
 import torch
 import torch.nn as nn
@@ -38,15 +39,106 @@ def _find_transformer_block_list(module: nn.Module) -> Optional[nn.ModuleList]:
     return None
 
 
+def _select_hook_indices(L: int, n: int) -> List[int]:
+    if L <= n:
+        return list(range(max(0, L - n), L))
+    xs = torch.linspace(0, L - 1, steps=n).round().long().tolist()
+    xs = sorted(set(int(x) for x in xs))
+    if len(xs) < n:
+        tail = list(range(L - n, L))
+        xs = sorted(set(xs + tail))
+    if len(xs) > n:
+        xs = xs[-n:]
+    return xs
+
+
+class ConvGNAct(nn.Module):
+    def __init__(self, in_ch: int, out_ch: int, k: int = 3, s: int = 1, p: int = 1, groups: int = 32):
+        super().__init__()
+        self.conv = nn.Conv2d(in_ch, out_ch, kernel_size=k, stride=s, padding=p, bias=False)
+        g = min(groups, out_ch)
+        self.gn = nn.GroupNorm(g, out_ch)
+        self.act = nn.SiLU(inplace=True)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        wd = self.conv.weight.dtype
+        if x.dtype != wd:
+            x = x.to(dtype=wd)
+        return self.act(self.gn(self.conv(x)))
+
+
+class DynConv1x1(nn.Module):
+    def __init__(self, out_ch: int, bias: bool = False):
+        super().__init__()
+        self.out_ch = int(out_ch)
+        self.bias = bool(bias)
+        self.conv: Optional[nn.Conv2d] = None
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if self.conv is None:
+            in_ch = int(x.shape[1])
+            self.conv = nn.Conv2d(in_ch, self.out_ch, kernel_size=1, bias=self.bias).to(device=x.device, dtype=x.dtype)
+            nn.init.kaiming_normal_(self.conv.weight, mode="fan_out", nonlinearity="relu")
+            if self.conv.bias is not None:
+                nn.init.zeros_(self.conv.bias)
+        else:
+            if self.conv.weight.device != x.device:
+                self.conv = self.conv.to(device=x.device)
+            if self.conv.weight.dtype != x.dtype:
+                self.conv = self.conv.to(dtype=x.dtype)
+        return self.conv(x)
+
+
+class TokenPyramid(nn.Module):
+    def __init__(self, out_channels: int = 256, groups: int = 32):
+        super().__init__()
+        self.proj = nn.ModuleList([DynConv1x1(out_channels), DynConv1x1(out_channels), DynConv1x1(out_channels), DynConv1x1(out_channels)])
+        self.ref = nn.ModuleList(
+            [
+                nn.Sequential(ConvGNAct(out_channels, out_channels, 3, 1, 1, groups=groups), ConvGNAct(out_channels, out_channels, 3, 1, 1, groups=groups)),
+                nn.Sequential(ConvGNAct(out_channels, out_channels, 3, 1, 1, groups=groups), ConvGNAct(out_channels, out_channels, 3, 1, 1, groups=groups)),
+                nn.Sequential(ConvGNAct(out_channels, out_channels, 3, 1, 1, groups=groups), ConvGNAct(out_channels, out_channels, 3, 1, 1, groups=groups)),
+                nn.Sequential(ConvGNAct(out_channels, out_channels, 3, 1, 1, groups=groups), ConvGNAct(out_channels, out_channels, 3, 1, 1, groups=groups)),
+            ]
+        )
+
+    def forward(self, maps: List[torch.Tensor]) -> List[torch.Tensor]:
+        f0, f1, f2, f3 = maps
+        _, _, H, W = f0.shape
+        h3, w3 = max(1, (H + 1) // 2), max(1, (W + 1) // 2)
+        h4, w4 = max(1, (H + 3) // 4), max(1, (W + 3) // 4)
+        h5, w5 = max(1, (H + 7) // 8), max(1, (W + 7) // 8)
+
+        c2 = self.ref[0](self.proj[0](f0))
+        x1 = self.proj[1](f1)
+        x2 = self.proj[2](f2)
+        x3 = self.proj[3](f3)
+
+        c3 = self.ref[1](F.interpolate(x1, size=(h3, w3), mode="bilinear", align_corners=False))
+        c4 = self.ref[2](F.interpolate(x2, size=(h4, w4), mode="bilinear", align_corners=False))
+        c5 = self.ref[3](F.interpolate(x3, size=(h5, w5), mode="bilinear", align_corners=False))
+        return [c2, c3, c4, c5]
+
+
 class SimpleFPN(nn.Module):
     def __init__(self, out_channels: int = 256):
         super().__init__()
-        self.lateral_convs = nn.ModuleList(
-            [nn.LazyConv2d(out_channels, kernel_size=1), nn.LazyConv2d(out_channels, kernel_size=1), nn.LazyConv2d(out_channels, kernel_size=1), nn.LazyConv2d(out_channels, kernel_size=1)]
-        )
+        self.lateral_convs = nn.ModuleList([DynConv1x1(out_channels), DynConv1x1(out_channels), DynConv1x1(out_channels), DynConv1x1(out_channels)])
         self.out_convs = nn.ModuleList(
-            [nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1), nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1), nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1), nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)]
+            [
+                nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+                nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+                nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+                nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+            ]
         )
+
+    @staticmethod
+    def _apply_conv(conv: nn.Conv2d, x: torch.Tensor) -> torch.Tensor:
+        wd = conv.weight.dtype
+        if x.dtype != wd:
+            x = x.to(dtype=wd)
+        return conv(x)
 
     def forward(self, feats: List[torch.Tensor]) -> List[torch.Tensor]:
         c2, c3, c4, c5 = feats
@@ -54,14 +146,16 @@ class SimpleFPN(nn.Module):
         lat3 = self.lateral_convs[1](c3)
         lat4 = self.lateral_convs[2](c4)
         lat5 = self.lateral_convs[3](c5)
+
         p5 = lat5
         p4 = lat4 + F.interpolate(p5, size=lat4.shape[-2:], mode="nearest")
         p3 = lat3 + F.interpolate(p4, size=lat3.shape[-2:], mode="nearest")
         p2 = lat2 + F.interpolate(p3, size=lat2.shape[-2:], mode="nearest")
-        p2 = self.out_convs[0](p2)
-        p3 = self.out_convs[1](p3)
-        p4 = self.out_convs[2](p4)
-        p5 = self.out_convs[3](p5)
+
+        p2 = self._apply_conv(self.out_convs[0], p2)
+        p3 = self._apply_conv(self.out_convs[1], p3)
+        p4 = self._apply_conv(self.out_convs[2], p4)
+        p5 = self._apply_conv(self.out_convs[3], p5)
         return [p2, p3, p4, p5]
 
 
@@ -84,27 +178,29 @@ class QwenVLBackbone(nn.Module):
         self.keep_llm = keep_llm
         self.num_hook_layers = num_hook_layers
         self.force_image_size = force_image_size
-
-        from transformers import AutoProcessor
-
-        self.processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=trust_remote_code, use_fast=False)
+        self._processor_kind = "auto"
 
         if torch_dtype is None:
             torch_dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
+
+        try:
+            from transformers import AutoProcessor
+            self.processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=trust_remote_code, use_fast=False)
+            self._processor_kind = "auto"
+        except ImportError as e:
+            msg = str(e).lower()
+            if "torchvision" in msg or "autovideoprocessor" in msg:
+                from transformers import AutoImageProcessor
+                self.processor = AutoImageProcessor.from_pretrained(model_name, trust_remote_code=trust_remote_code, use_fast=False)
+                self._processor_kind = "image"
+            else:
+                raise
 
         model_kwargs = {"trust_remote_code": trust_remote_code, "torch_dtype": torch_dtype, "low_cpu_mem_usage": True, "use_safetensors": True}
         if attn_implementation is not None:
             model_kwargs["attn_implementation"] = attn_implementation
 
-        use_device_map = False
-        if torch.cuda.is_available() and load_device.startswith("cuda"):
-            try:
-                import accelerate
-                os.makedirs(offload_folder, exist_ok=True)
-                model_kwargs.update({"device_map": "auto", "offload_folder": offload_folder, "offload_state_dict": True})
-                use_device_map = True
-            except Exception:
-                use_device_map = False
+        os.makedirs(offload_folder, exist_ok=True)
 
         self.vlm = None
         self.visual = None
@@ -141,35 +237,36 @@ class QwenVLBackbone(nn.Module):
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
 
-        self._hooked_states: List[torch.Tensor] = []
+        self._hooked_states: List[Optional[torch.Tensor]] = [None for _ in range(self.num_hook_layers)]
         self._hooks: List[torch.utils.hooks.RemovableHandle] = []
 
         blocks = _find_transformer_block_list(self.encoder)
         if blocks is None or len(blocks) < self.num_hook_layers:
             raise RuntimeError("Could not find transformer block ModuleList inside vision encoder.")
         self.blocks = blocks
-        hook_indices = list(range(len(blocks) - self.num_hook_layers, len(blocks)))
 
-        def _make_hook():
+        hook_indices = _select_hook_indices(len(blocks), self.num_hook_layers)
+
+        def _make_hook(slot: int):
             def _hook(_module, _inp, out):
                 out0 = out[0] if isinstance(out, (tuple, list)) else out
                 if torch.is_tensor(out0):
-                    self._hooked_states.append(out0)
+                    self._hooked_states[slot] = out0
             return _hook
 
-        for idx in hook_indices:
-            self._hooks.append(self.blocks[idx].register_forward_hook(_make_hook()))
+        for slot, idx in enumerate(hook_indices):
+            self._hooks.append(self.blocks[idx].register_forward_hook(_make_hook(slot)))
 
+        self.pyramid = TokenPyramid(out_channels=fpn_dim)
         self.fpn = SimpleFPN(out_channels=fpn_dim)
-        self._fpn_dtype = torch_dtype
 
         if torch.cuda.is_available() and load_device.startswith("cuda"):
+            self.pyramid.to(device=load_device, dtype=torch_dtype)
             self.fpn.to(device=load_device, dtype=torch_dtype)
-        else:
-            self.fpn.to(dtype=torch_dtype)
-
-        if torch.cuda.is_available() and (not use_device_map):
             self.visual.to(load_device)
+        else:
+            self.pyramid.to(dtype=torch_dtype)
+            self.fpn.to(dtype=torch_dtype)
 
     def enable_gradient_checkpointing(self):
         for m in [self.visual, self.encoder]:
@@ -238,6 +335,37 @@ class QwenVLBackbone(nn.Module):
         x = tokens_bnc.view(b, t, h, w, c)[:, 0]
         return x.permute(0, 3, 1, 2).contiguous()
 
+    def _infer_grid_thw(self, pixel_values: torch.Tensor, bsz: int, device: torch.device) -> torch.Tensor:
+        H, W = int(pixel_values.shape[-2]), int(pixel_values.shape[-1])
+        cfg = getattr(self.visual, "config", None)
+        if cfg is None:
+            cfg = getattr(self.encoder, "config", None)
+
+        ps = getattr(cfg, "patch_size", 14) if cfg is not None else 14
+        if isinstance(ps, (list, tuple)):
+            ps = int(ps[0])
+        else:
+            ps = int(ps)
+
+        merge = 1
+        if cfg is not None:
+            m = getattr(cfg, "spatial_merge_size", None)
+            if m is None:
+                m = getattr(cfg, "merge_size", None)
+            if m is not None:
+                if isinstance(m, (list, tuple)):
+                    merge = int(m[0])
+                else:
+                    merge = int(m)
+                merge = max(1, merge)
+
+        gh = int(math.ceil(H / float(ps)))
+        gw = int(math.ceil(W / float(ps)))
+        gh = max(1, gh // merge)
+        gw = max(1, gw // merge)
+
+        return torch.tensor([[1, gh, gw]] * bsz, device=device, dtype=torch.long)
+
     def forward(self, images: torch.Tensor) -> Dict[str, Union[List[torch.Tensor], torch.Tensor, torch.Tensor]]:
         device = images.device
         bsz = images.shape[0]
@@ -246,7 +374,7 @@ class QwenVLBackbone(nn.Module):
             s = int(self.force_image_size)
             pil_images = [im.resize((s, s), resample=Image.BICUBIC) for im in pil_images]
 
-        if hasattr(self.processor, "image_processor"):
+        if self._processor_kind == "auto" and hasattr(self.processor, "image_processor"):
             vis_inputs = self.processor.image_processor(images=pil_images, return_tensors="pt")
         else:
             vis_inputs = self.processor(images=pil_images, return_tensors="pt")
@@ -258,28 +386,26 @@ class QwenVLBackbone(nn.Module):
         try:
             enc_dtype = next(self.encoder.parameters()).dtype
         except StopIteration:
-            enc_dtype = self._fpn_dtype
+            enc_dtype = pixel_values.dtype
         pixel_values = pixel_values.to(dtype=enc_dtype)
 
         grid = None
-        for k in ("image_grid_thw", "vision_grid_thws", "image_grid_thws", "vision_grid_thw"):
+        for k in ("image_grid_thw", "vision_grid_thws", "image_grid_thws", "vision_grid_thw", "grid_thw"):
             if k in vis_inputs and vis_inputs[k] is not None:
                 grid = vis_inputs[k]
                 break
         if grid is None:
-            raise RuntimeError("Processor did not return grid.")
-        image_grid_thw = grid.to(device=device)
+            image_grid_thw = self._infer_grid_thw(pixel_values, bsz, device)
+        else:
+            image_grid_thw = grid.to(device=device, dtype=torch.long)
 
-        self._hooked_states = []
+        self._hooked_states = [None for _ in range(self.num_hook_layers)]
         enc_out = self._call_encoder(pixel_values, image_grid_thw)
 
-        window_index = None
         tokens_final = None
         if isinstance(enc_out, (tuple, list)):
             if len(enc_out) >= 1 and torch.is_tensor(enc_out[0]):
                 tokens_final = enc_out[0]
-            if len(enc_out) >= 2 and torch.is_tensor(enc_out[1]):
-                window_index = enc_out[1]
         elif torch.is_tensor(enc_out):
             tokens_final = enc_out
         else:
@@ -288,45 +414,33 @@ class QwenVLBackbone(nn.Module):
             else:
                 raise RuntimeError("Unexpected encoder output type.")
 
-        tokens_final = self._ensure_flat_tokens(tokens_final)
+        _ = self._ensure_flat_tokens(tokens_final)
 
-        if window_index is not None and torch.is_tensor(window_index):
-            try:
-                reverse_indices = torch.argsort(window_index)
-                if tokens_final.ndim == 2:
-                    tokens_final = tokens_final[reverse_indices, :]
-                reordered_states = []
-                for hs in self._hooked_states:
-                    hs = self._ensure_flat_tokens(hs)
-                    if hs.ndim == 2:
-                        hs = hs[reverse_indices, :]
-                    reordered_states.append(hs)
-                self._hooked_states = reordered_states
-            except Exception:
-                pass
-
-        if len(self._hooked_states) < self.num_hook_layers:
+        if any(s is None for s in self._hooked_states):
             raise RuntimeError("Hooked states missing.")
 
         feats_maps: List[torch.Tensor] = []
-        for hs in self._hooked_states[-self.num_hook_layers:]:
+        for hs in self._hooked_states:
             hs = self._ensure_flat_tokens(hs)
             hs_bnc = self._split_tokens_to_bnc(hs, image_grid_thw, bsz)
             fmap = self._bnc_to_bchw(hs_bnc, image_grid_thw)
             feats_maps.append(fmap)
 
-        c2 = feats_maps[0]
-        c3 = F.avg_pool2d(feats_maps[1], kernel_size=2, stride=2)
-        c4 = F.avg_pool2d(feats_maps[2], kernel_size=4, stride=4)
-        c5 = F.avg_pool2d(feats_maps[3], kernel_size=8, stride=8)
+        try:
+            target_dtype = next(self.fpn.parameters()).dtype
+        except StopIteration:
+            target_dtype = feats_maps[0].dtype
 
-        fpn_dtype = self._fpn_dtype
-        c2 = c2.to(dtype=fpn_dtype)
-        c3 = c3.to(dtype=fpn_dtype)
-        c4 = c4.to(dtype=fpn_dtype)
-        c5 = c5.to(dtype=fpn_dtype)
+        feats_maps = [m.to(dtype=target_dtype) for m in feats_maps]
+        c2, c3, c4, c5 = self.pyramid(feats_maps)
+        c2 = c2.to(dtype=target_dtype)
+        c3 = c3.to(dtype=target_dtype)
+        c4 = c4.to(dtype=target_dtype)
+        c5 = c5.to(dtype=target_dtype)
 
         fpn_feats = self.fpn([c2, c3, c4, c5])
-        global_feat = feats_maps[-1].mean(dim=(2, 3))
+
+        pooled = [F.adaptive_avg_pool2d(p, 1).flatten(1) for p in fpn_feats]
+        global_feat = torch.cat(pooled, dim=1)
 
         return {"fpn": fpn_feats, "global": global_feat, "image_grid_thw": image_grid_thw}
