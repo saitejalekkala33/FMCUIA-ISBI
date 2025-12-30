@@ -259,14 +259,17 @@ class QwenVLBackbone(nn.Module):
 
         self.pyramid = TokenPyramid(out_channels=fpn_dim)
         self.fpn = SimpleFPN(out_channels=fpn_dim)
+        self.fpn_v1 = SimpleFPN(out_channels=fpn_dim)
 
         if torch.cuda.is_available() and load_device.startswith("cuda"):
             self.pyramid.to(device=load_device, dtype=torch_dtype)
             self.fpn.to(device=load_device, dtype=torch_dtype)
+            self.fpn_v1.to(device=load_device, dtype=torch_dtype)
             self.visual.to(load_device)
         else:
             self.pyramid.to(dtype=torch_dtype)
             self.fpn.to(dtype=torch_dtype)
+            self.fpn_v1.to(dtype=torch_dtype)
 
     def enable_gradient_checkpointing(self):
         for m in [self.visual, self.encoder]:
@@ -366,6 +369,18 @@ class QwenVLBackbone(nn.Module):
 
         return torch.tensor([[1, gh, gw]] * bsz, device=device, dtype=torch.long)
 
+    @staticmethod
+    def _pool_down(x: torch.Tensor, factor: int) -> torch.Tensor:
+        f = int(max(1, factor))
+        if f == 1:
+            return x
+        H, W = int(x.shape[-2]), int(x.shape[-1])
+        if H < f or W < f:
+            oh = max(1, H // f)
+            ow = max(1, W // f)
+            return F.adaptive_avg_pool2d(x, output_size=(oh, ow))
+        return F.avg_pool2d(x, kernel_size=f, stride=f)
+
     def forward(self, images: torch.Tensor) -> Dict[str, Union[List[torch.Tensor], torch.Tensor, torch.Tensor]]:
         device = images.device
         bsz = images.shape[0]
@@ -432,6 +447,7 @@ class QwenVLBackbone(nn.Module):
             target_dtype = feats_maps[0].dtype
 
         feats_maps = [m.to(dtype=target_dtype) for m in feats_maps]
+
         c2, c3, c4, c5 = self.pyramid(feats_maps)
         c2 = c2.to(dtype=target_dtype)
         c3 = c3.to(dtype=target_dtype)
@@ -439,8 +455,21 @@ class QwenVLBackbone(nn.Module):
         c5 = c5.to(dtype=target_dtype)
 
         fpn_feats = self.fpn([c2, c3, c4, c5])
-
         pooled = [F.adaptive_avg_pool2d(p, 1).flatten(1) for p in fpn_feats]
         global_feat = torch.cat(pooled, dim=1)
 
-        return {"fpn": fpn_feats, "global": global_feat, "image_grid_thw": image_grid_thw}
+        fm0, fm1, fm2, fm3 = feats_maps
+        c2v1 = fm0
+        c3v1 = self._pool_down(fm1, 2)
+        c4v1 = self._pool_down(fm2, 4)
+        c5v1 = self._pool_down(fm3, 8)
+        fpn_feats_v1 = self.fpn_v1([c2v1, c3v1, c4v1, c5v1])
+        global_feat_v1 = fm3.mean(dim=(2, 3))
+
+        return {
+            "fpn": fpn_feats,
+            "global": global_feat,
+            "fpn_v1": fpn_feats_v1,
+            "global_v1": global_feat_v1,
+            "image_grid_thw": image_grid_thw,
+        }

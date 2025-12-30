@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from models.backbone_qwen_vl import QwenVLBackbone
-from models.heads import SegmentationHead, ClassificationHead, RegressionHead, DetectionGridHead
+from models.heads import SegmentationHeadV1, ClassificationHead, RegressionHeadV1, DetectionGridHead
 from losses import segmentation_loss, classification_loss, regression_loss, detection_grid_loss
 
 
@@ -66,9 +66,9 @@ class MultiTaskModel(nn.Module):
             force_image_size=force_image_size,
         )
 
-        self.seg_head = SegmentationHead(fpn_dim=fpn_dim, max_classes=self.max_seg_classes)
+        self.seg_head = SegmentationHeadV1(fpn_dim=fpn_dim, max_classes=self.max_seg_classes)
         self.cls_head = ClassificationHead(max_classes=self.max_cls_classes)
-        self.reg_head = RegressionHead(max_dim=self.max_reg_dim)
+        self.reg_head = RegressionHeadV1(max_dim=self.max_reg_dim)
         self.det_head = DetectionGridHead(fpn_dim=fpn_dim, num_convs=4)
 
         self.loss_balancer = UncertaintyLossBalancer()
@@ -82,8 +82,10 @@ class MultiTaskModel(nn.Module):
         num_classes = int(cfg["num_classes"])
 
         feats = self.backbone(images)
-        fpn_feats: List[torch.Tensor] = feats["fpn"]
-        global_feat: torch.Tensor = feats["global"]
+        fpn_feats_v2: List[torch.Tensor] = feats["fpn"]
+        global_feat_v2: torch.Tensor = feats["global"]
+        fpn_feats_v1: List[torch.Tensor] = feats["fpn_v1"]
+        global_feat_v1: torch.Tensor = feats["global_v1"]
 
         H_img, W_img = images.shape[-2], images.shape[-1]
 
@@ -91,7 +93,7 @@ class MultiTaskModel(nn.Module):
         loss_dict: Dict[str, torch.Tensor] = {}
 
         if task_name == "segmentation":
-            logits = self.seg_head(fpn_feats, out_size=(H_img, W_img))
+            logits = self.seg_head(fpn_feats_v1, out_size=(H_img, W_img))
             logits = logits[:, :num_classes, :, :]
             outputs["seg_logits"] = logits
             if labels is not None:
@@ -100,7 +102,7 @@ class MultiTaskModel(nn.Module):
                 loss_dict["total_loss"] = loss
 
         elif task_name == "classification":
-            logits = self.cls_head(global_feat)
+            logits = self.cls_head(global_feat_v2)
             logits = logits[:, :num_classes]
             outputs["cls_logits"] = logits
             if labels is not None:
@@ -109,7 +111,7 @@ class MultiTaskModel(nn.Module):
                 loss_dict["total_loss"] = loss
 
         elif task_name == "Regression":
-            pred = self.reg_head(global_feat)
+            pred = self.reg_head(global_feat_v1)
             out_dim = 2 * num_classes
             pred = pred[:, :out_dim].sigmoid()
             outputs["reg_pred"] = pred
@@ -119,7 +121,7 @@ class MultiTaskModel(nn.Module):
                 loss_dict["total_loss"] = loss
 
         elif task_name == "detection":
-            det_out = self.det_head(fpn_feats)
+            det_out = self.det_head(fpn_feats_v2)
             outputs.update(det_out)
             if labels is not None:
                 loss, parts = detection_grid_loss(det_out["det_map"], labels)

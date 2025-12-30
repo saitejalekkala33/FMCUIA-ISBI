@@ -1,0 +1,1248 @@
+[Info] Device: cuda:0
+[Info] Using data root setting: /root/train/train
+[Info] Resolved data root: /root/train/train
+Data loaded. Total samples: 40388
+Data loaded. Total samples: 40388
+Data loaded. Total samples: 40388
+[Info] Dataset split: 32324 train samples, 8064 val samples (data_frac=1.0)
+
+--- Epoch 1 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0099
+  - Task 'IUGC                     ': 0.0044
+  - Task 'breast_2cls              ': 0.5801
+  - Task 'breast_3cls              ': 0.6748
+  - Task 'breast_lesion            ': 0.8261
+  - Task 'cardiac_multi            ': 1.2328
+  - Task 'carotid_artery           ': 0.8465
+  - Task 'cervix                   ': 0.7963
+  - Task 'cervix_multi             ': 1.0752
+  - Task 'fetal_abdomen_multi      ': 1.3349
+  - Task 'fetal_femur              ': 0.0143
+  - Task 'fetal_head               ': 0.3966
+  - Task 'fetal_head_pos_cls       ': 0.9586
+  - Task 'fetal_heart              ': 0.8952
+  - Task 'fetal_plane_cls          ': 0.7312
+  - Task 'fetal_sacral_pos_cls     ': 0.9878
+  - Task 'head_symphysis_multi     ': 0.7616
+  - Task 'liver_lesion_2cls        ': 0.5859
+  - Task 'lung                     ': 0.6985
+  - Task 'lung_2cls                ': 0.5857
+  - Task 'lung_disease_3cls        ': 0.6786
+  - Task 'organ_cls                ': 0.9070
+  - Task 'ovary_tumor              ': 0.8124
+  - Task 'spinal_cord_injury_loc   ': 1.3645
+  - Task 'thyroid_nodule           ': 0.9287
+  - Task 'thyroid_nodule_det       ': 1.9177
+  - Task 'uterine_fibroid_det      ': 2.0259
+----------------------------------------
+
+--- Epoch 1 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     26.190895       NaN       NaN      NaN      NaN
+                  IUGC     Regression     18.415915       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.702703  0.702703      NaN      NaN
+           breast_3cls classification           NaN  0.588571  0.588571      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.706147      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.695131      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.679610      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.679583      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.760348      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.516468      NaN
+           fetal_femur     Regression     63.238819       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.924894      NaN
+    fetal_head_pos_cls classification           NaN  0.249509  0.249509      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.681613      NaN
+       fetal_plane_cls classification           NaN  0.482851  0.482851      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.260417  0.260417      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.860839      NaN
+     liver_lesion_2cls classification           NaN  0.712977  0.712977      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.768285      NaN
+             lung_2cls classification           NaN  0.430769  0.430769      NaN      NaN
+     lung_disease_3cls classification           NaN  0.598425  0.598425      NaN      NaN
+             organ_cls classification           NaN  0.534884  0.534884      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.666461      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.559679
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.639147      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.144806
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.196374
+--- Average Val Score (Higher is better): 0.5072 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.5072)
+
+--- Epoch 2 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0029
+  - Task 'IUGC                     ': 0.0018
+  - Task 'breast_2cls              ': 0.5517
+  - Task 'breast_3cls              ': 0.6121
+  - Task 'breast_lesion            ': 0.5881
+  - Task 'cardiac_multi            ': 0.7030
+  - Task 'carotid_artery           ': 0.4897
+  - Task 'cervix                   ': 0.4508
+  - Task 'cervix_multi             ': 0.6314
+  - Task 'fetal_abdomen_multi      ': 1.0196
+  - Task 'fetal_femur              ': 0.0079
+  - Task 'fetal_head               ': 0.2454
+  - Task 'fetal_head_pos_cls       ': 0.8527
+  - Task 'fetal_heart              ': 0.4989
+  - Task 'fetal_plane_cls          ': 0.5284
+  - Task 'fetal_sacral_pos_cls     ': 0.9007
+  - Task 'head_symphysis_multi     ': 0.4290
+  - Task 'liver_lesion_2cls        ': 0.5410
+  - Task 'lung                     ': 0.5061
+  - Task 'lung_2cls                ': 0.5473
+  - Task 'lung_disease_3cls        ': 0.5811
+  - Task 'organ_cls                ': 0.5566
+  - Task 'ovary_tumor              ': 0.6064
+  - Task 'spinal_cord_injury_loc   ': 1.0489
+  - Task 'thyroid_nodule           ': 0.6731
+  - Task 'thyroid_nodule_det       ': 1.3680
+  - Task 'uterine_fibroid_det      ': 1.4855
+----------------------------------------
+
+--- Epoch 2 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     25.062445       NaN       NaN      NaN      NaN
+                  IUGC     Regression     19.422503       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.675676  0.675676      NaN      NaN
+           breast_3cls classification           NaN  0.605714  0.605714      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.720747      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.772379      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.732481      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.726075      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.745866      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.598127      NaN
+           fetal_femur     Regression     40.319241       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.867447      NaN
+    fetal_head_pos_cls classification           NaN  0.607073  0.607073      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.725425      NaN
+       fetal_plane_cls classification           NaN  0.872226  0.872226      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.447917  0.447917      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.858815      NaN
+     liver_lesion_2cls classification           NaN  0.743511  0.743511      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.773619      NaN
+             lung_2cls classification           NaN  0.600000  0.600000      NaN      NaN
+     lung_disease_3cls classification           NaN  0.669291  0.669291      NaN      NaN
+             organ_cls classification           NaN  0.930233  0.930233      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.723175      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.725628
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.696688      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.584671
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.451946
+--- Average Val Score (Higher is better): 0.6749 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.6749)
+
+--- Epoch 3 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0021
+  - Task 'IUGC                     ': 0.0016
+  - Task 'breast_2cls              ': 0.4938
+  - Task 'breast_3cls              ': 0.4922
+  - Task 'breast_lesion            ': 0.4779
+  - Task 'cardiac_multi            ': 0.5769
+  - Task 'carotid_artery           ': 0.3198
+  - Task 'cervix                   ': 0.3801
+  - Task 'cervix_multi             ': 0.5550
+  - Task 'fetal_abdomen_multi      ': 0.8629
+  - Task 'fetal_femur              ': 0.0068
+  - Task 'fetal_head               ': 0.2318
+  - Task 'fetal_head_pos_cls       ': 0.6105
+  - Task 'fetal_heart              ': 0.4318
+  - Task 'fetal_plane_cls          ': 0.4449
+  - Task 'fetal_sacral_pos_cls     ': 0.5829
+  - Task 'head_symphysis_multi     ': 0.3659
+  - Task 'liver_lesion_2cls        ': 0.4700
+  - Task 'lung                     ': 0.4853
+  - Task 'lung_2cls                ': 0.5372
+  - Task 'lung_disease_3cls        ': 0.4950
+  - Task 'organ_cls                ': 0.3941
+  - Task 'ovary_tumor              ': 0.4844
+  - Task 'spinal_cord_injury_loc   ': 0.9587
+  - Task 'thyroid_nodule           ': 0.5767
+  - Task 'thyroid_nodule_det       ': 1.1812
+  - Task 'uterine_fibroid_det      ': 1.3115
+----------------------------------------
+
+--- Epoch 3 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     22.253451       NaN       NaN      NaN      NaN
+                  IUGC     Regression     15.069566       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.711712  0.711712      NaN      NaN
+           breast_3cls classification           NaN  0.742857  0.742857      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.777985      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.807619      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.817279      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.783111      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.822231      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.673324      NaN
+           fetal_femur     Regression     38.058427       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.936778      NaN
+    fetal_head_pos_cls classification           NaN  0.658153  0.658153      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.796640      NaN
+       fetal_plane_cls classification           NaN  0.897781  0.897781      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.531250  0.531250      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.878333      NaN
+     liver_lesion_2cls classification           NaN  0.757252  0.757252      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.802847      NaN
+             lung_2cls classification           NaN  0.415385  0.415385      NaN      NaN
+     lung_disease_3cls classification           NaN  0.748031  0.748031      NaN      NaN
+             organ_cls classification           NaN  0.906977  0.906977      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.745285      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.730750
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.725190      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.599176
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.475532
+--- Average Val Score (Higher is better): 0.7036 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.7036)
+
+--- Epoch 4 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0026
+  - Task 'IUGC                     ': 0.0013
+  - Task 'breast_2cls              ': 0.4413
+  - Task 'breast_3cls              ': 0.4311
+  - Task 'breast_lesion            ': 0.4307
+  - Task 'cardiac_multi            ': 0.5029
+  - Task 'carotid_artery           ': 0.2753
+  - Task 'cervix                   ': 0.3212
+  - Task 'cervix_multi             ': 0.4403
+  - Task 'fetal_abdomen_multi      ': 0.7536
+  - Task 'fetal_femur              ': 0.0058
+  - Task 'fetal_head               ': 0.1897
+  - Task 'fetal_head_pos_cls       ': 0.4752
+  - Task 'fetal_heart              ': 0.3612
+  - Task 'fetal_plane_cls          ': 0.3707
+  - Task 'fetal_sacral_pos_cls     ': 0.4453
+  - Task 'head_symphysis_multi     ': 0.3127
+  - Task 'liver_lesion_2cls        ': 0.4235
+  - Task 'lung                     ': 0.4243
+  - Task 'lung_2cls                ': 0.4654
+  - Task 'lung_disease_3cls        ': 0.4210
+  - Task 'organ_cls                ': 0.3665
+  - Task 'ovary_tumor              ': 0.4720
+  - Task 'spinal_cord_injury_loc   ': 0.9081
+  - Task 'thyroid_nodule           ': 0.5136
+  - Task 'thyroid_nodule_det       ': 1.1140
+  - Task 'uterine_fibroid_det      ': 1.2363
+----------------------------------------
+
+--- Epoch 4 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     18.822917       NaN       NaN      NaN      NaN
+                  IUGC     Regression     14.447259       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.540541  0.540541      NaN      NaN
+           breast_3cls classification           NaN  0.794286  0.794286      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.714244      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.825910      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.737381      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.780064      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.837485      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.700235      NaN
+           fetal_femur     Regression     34.289131       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.932546      NaN
+    fetal_head_pos_cls classification           NaN  0.787819  0.787819      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.766743      NaN
+       fetal_plane_cls classification           NaN  0.909886  0.909886      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.635417  0.635417      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.883939      NaN
+     liver_lesion_2cls classification           NaN  0.822901  0.822901      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.786988      NaN
+             lung_2cls classification           NaN  0.646154  0.646154      NaN      NaN
+     lung_disease_3cls classification           NaN  0.771654  0.771654      NaN      NaN
+             organ_cls classification           NaN  0.906977  0.906977      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.709167      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.772003
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.699875      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.647798
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.550821
+--- Average Val Score (Higher is better): 0.7382 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.7382)
+
+--- Epoch 5 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0019
+  - Task 'IUGC                     ': 0.0012
+  - Task 'breast_2cls              ': 0.3551
+  - Task 'breast_3cls              ': 0.3951
+  - Task 'breast_lesion            ': 0.4117
+  - Task 'cardiac_multi            ': 0.4346
+  - Task 'carotid_artery           ': 0.2296
+  - Task 'cervix                   ': 0.2704
+  - Task 'cervix_multi             ': 0.4067
+  - Task 'fetal_abdomen_multi      ': 0.6770
+  - Task 'fetal_femur              ': 0.0050
+  - Task 'fetal_head               ': 0.1566
+  - Task 'fetal_head_pos_cls       ': 0.4230
+  - Task 'fetal_heart              ': 0.2954
+  - Task 'fetal_plane_cls          ': 0.3558
+  - Task 'fetal_sacral_pos_cls     ': 0.4130
+  - Task 'head_symphysis_multi     ': 0.2714
+  - Task 'liver_lesion_2cls        ': 0.3495
+  - Task 'lung                     ': 0.3879
+  - Task 'lung_2cls                ': 0.3698
+  - Task 'lung_disease_3cls        ': 0.3504
+  - Task 'organ_cls                ': 0.2709
+  - Task 'ovary_tumor              ': 0.4193
+  - Task 'spinal_cord_injury_loc   ': 0.8684
+  - Task 'thyroid_nodule           ': 0.4656
+  - Task 'thyroid_nodule_det       ': 1.0578
+  - Task 'uterine_fibroid_det      ': 1.1825
+----------------------------------------
+
+--- Epoch 5 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     20.463844       NaN       NaN      NaN      NaN
+                  IUGC     Regression     13.984141       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.783784  0.783784      NaN      NaN
+           breast_3cls classification           NaN  0.840000  0.840000      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.781467      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.826684      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.849713      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.775800      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.814150      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.723817      NaN
+           fetal_femur     Regression     34.993217       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.943636      NaN
+    fetal_head_pos_cls classification           NaN  0.781925  0.781925      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.788609      NaN
+       fetal_plane_cls classification           NaN  0.897108  0.897108      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.541667  0.541667      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.853373      NaN
+     liver_lesion_2cls classification           NaN  0.861069  0.861069      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.824143      NaN
+             lung_2cls classification           NaN  0.661538  0.661538      NaN      NaN
+     lung_disease_3cls classification           NaN  0.771654  0.771654      NaN      NaN
+             organ_cls classification           NaN  0.930233  0.930233      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.759751      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.800091
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.749885      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.636091
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.610617
+--- Average Val Score (Higher is better): 0.7652 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.7652)
+
+--- Epoch 6 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0018
+  - Task 'IUGC                     ': 0.0011
+  - Task 'breast_2cls              ': 0.3024
+  - Task 'breast_3cls              ': 0.3143
+  - Task 'breast_lesion            ': 0.3525
+  - Task 'cardiac_multi            ': 0.4141
+  - Task 'carotid_artery           ': 0.2233
+  - Task 'cervix                   ': 0.2381
+  - Task 'cervix_multi             ': 0.3508
+  - Task 'fetal_abdomen_multi      ': 0.6169
+  - Task 'fetal_femur              ': 0.0045
+  - Task 'fetal_head               ': 0.1688
+  - Task 'fetal_head_pos_cls       ': 0.3426
+  - Task 'fetal_heart              ': 0.2585
+  - Task 'fetal_plane_cls          ': 0.2890
+  - Task 'fetal_sacral_pos_cls     ': 0.3740
+  - Task 'head_symphysis_multi     ': 0.2486
+  - Task 'liver_lesion_2cls        ': 0.3068
+  - Task 'lung                     ': 0.3647
+  - Task 'lung_2cls                ': 0.3122
+  - Task 'lung_disease_3cls        ': 0.3202
+  - Task 'organ_cls                ': 0.2205
+  - Task 'ovary_tumor              ': 0.3642
+  - Task 'spinal_cord_injury_loc   ': 0.8462
+  - Task 'thyroid_nodule           ': 0.4500
+  - Task 'thyroid_nodule_det       ': 1.0361
+  - Task 'uterine_fibroid_det      ': 1.1523
+----------------------------------------
+
+--- Epoch 6 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     19.574553       NaN       NaN      NaN      NaN
+                  IUGC     Regression     14.774206       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.756757  0.756757      NaN      NaN
+           breast_3cls classification           NaN  0.794286  0.794286      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.814489      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.848429      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.888400      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.809977      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.869995      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.762638      NaN
+           fetal_femur     Regression     34.732162       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.924202      NaN
+    fetal_head_pos_cls classification           NaN  0.758350  0.758350      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.827013      NaN
+       fetal_plane_cls classification           NaN  0.859449  0.859449      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.583333  0.583333      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.901579      NaN
+     liver_lesion_2cls classification           NaN  0.769466  0.769466      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.819992      NaN
+             lung_2cls classification           NaN  0.538462  0.538462      NaN      NaN
+     lung_disease_3cls classification           NaN  0.771654  0.771654      NaN      NaN
+             organ_cls classification           NaN  0.930233  0.930233      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.775540      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.803426
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.767661      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.652874
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.589160
+--- Average Val Score (Higher is better): 0.7547 ---
+[EarlyStopping] No improvement for 1/3 epoch(s).
+
+--- Epoch 7 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0015
+  - Task 'IUGC                     ': 0.0010
+  - Task 'breast_2cls              ': 0.3061
+  - Task 'breast_3cls              ': 0.2705
+  - Task 'breast_lesion            ': 0.3368
+  - Task 'cardiac_multi            ': 0.3848
+  - Task 'carotid_artery           ': 0.1835
+  - Task 'cervix                   ': 0.2180
+  - Task 'cervix_multi             ': 0.3145
+  - Task 'fetal_abdomen_multi      ': 0.5678
+  - Task 'fetal_femur              ': 0.0041
+  - Task 'fetal_head               ': 0.1451
+  - Task 'fetal_head_pos_cls       ': 0.2740
+  - Task 'fetal_heart              ': 0.2392
+  - Task 'fetal_plane_cls          ': 0.2366
+  - Task 'fetal_sacral_pos_cls     ': 0.2996
+  - Task 'head_symphysis_multi     ': 0.2349
+  - Task 'liver_lesion_2cls        ': 0.2724
+  - Task 'lung                     ': 0.3320
+  - Task 'lung_2cls                ': 0.2691
+  - Task 'lung_disease_3cls        ': 0.2891
+  - Task 'organ_cls                ': 0.1881
+  - Task 'ovary_tumor              ': 0.3382
+  - Task 'spinal_cord_injury_loc   ': 0.8187
+  - Task 'thyroid_nodule           ': 0.3879
+  - Task 'thyroid_nodule_det       ': 0.9860
+  - Task 'uterine_fibroid_det      ': 1.1263
+----------------------------------------
+
+--- Epoch 7 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     16.305660       NaN       NaN      NaN      NaN
+                  IUGC     Regression     14.328138       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.765766  0.765766      NaN      NaN
+           breast_3cls classification           NaN  0.817143  0.817143      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.787753      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.850390      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.839604      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.802932      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.880997      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.746659      NaN
+           fetal_femur     Regression     32.269276       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.911093      NaN
+    fetal_head_pos_cls classification           NaN  0.791749  0.791749      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.780906      NaN
+       fetal_plane_cls classification           NaN  0.915938  0.915938      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.697917  0.697917      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.908926      NaN
+     liver_lesion_2cls classification           NaN  0.847328  0.847328      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.811089      NaN
+             lung_2cls classification           NaN  0.661538  0.661538      NaN      NaN
+     lung_disease_3cls classification           NaN  0.803150  0.803150      NaN      NaN
+             organ_cls classification           NaN  0.953488  0.953488      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.743124      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.801135
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.752468      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.671302
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.614710
+--- Average Val Score (Higher is better): 0.7814 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.7814)
+
+--- Epoch 8 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0012
+  - Task 'IUGC                     ': 0.0009
+  - Task 'breast_2cls              ': 0.2293
+  - Task 'breast_3cls              ': 0.2750
+  - Task 'breast_lesion            ': 0.3325
+  - Task 'cardiac_multi            ': 0.3493
+  - Task 'carotid_artery           ': 0.1839
+  - Task 'cervix                   ': 0.2076
+  - Task 'cervix_multi             ': 0.3027
+  - Task 'fetal_abdomen_multi      ': 0.5397
+  - Task 'fetal_femur              ': 0.0037
+  - Task 'fetal_head               ': 0.1358
+  - Task 'fetal_head_pos_cls       ': 0.2608
+  - Task 'fetal_heart              ': 0.2203
+  - Task 'fetal_plane_cls          ': 0.2070
+  - Task 'fetal_sacral_pos_cls     ': 0.2348
+  - Task 'head_symphysis_multi     ': 0.2282
+  - Task 'liver_lesion_2cls        ': 0.2235
+  - Task 'lung                     ': 0.3114
+  - Task 'lung_2cls                ': 0.1931
+  - Task 'lung_disease_3cls        ': 0.2127
+  - Task 'organ_cls                ': 0.1795
+  - Task 'ovary_tumor              ': 0.3060
+  - Task 'spinal_cord_injury_loc   ': 0.7965
+  - Task 'thyroid_nodule           ': 0.3778
+  - Task 'thyroid_nodule_det       ': 0.9607
+  - Task 'uterine_fibroid_det      ': 1.1033
+----------------------------------------
+
+--- Epoch 8 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     16.072191       NaN       NaN      NaN      NaN
+                  IUGC     Regression     13.156217       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.774775  0.774775      NaN      NaN
+           breast_3cls classification           NaN  0.857143  0.857143      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.817428      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.845348      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.878016      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.814313      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.849256      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.771203      NaN
+           fetal_femur     Regression     32.866358       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.946033      NaN
+    fetal_head_pos_cls classification           NaN  0.815324  0.815324      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.856086      NaN
+       fetal_plane_cls classification           NaN  0.934095  0.934095      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.656250  0.656250      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.923589      NaN
+     liver_lesion_2cls classification           NaN  0.867176  0.867176      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.840059      NaN
+             lung_2cls classification           NaN  0.646154  0.646154      NaN      NaN
+     lung_disease_3cls classification           NaN  0.834646  0.834646      NaN      NaN
+             organ_cls classification           NaN  0.906977  0.906977      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.782072      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.795211
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.771305      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.690526
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.641366
+--- Average Val Score (Higher is better): 0.7927 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.7927)
+
+--- Epoch 9 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0014
+  - Task 'IUGC                     ': 0.0008
+  - Task 'breast_2cls              ': 0.1644
+  - Task 'breast_3cls              ': 0.2082
+  - Task 'breast_lesion            ': 0.2990
+  - Task 'cardiac_multi            ': 0.3419
+  - Task 'carotid_artery           ': 0.1522
+  - Task 'cervix                   ': 0.2027
+  - Task 'cervix_multi             ': 0.2690
+  - Task 'fetal_abdomen_multi      ': 0.5138
+  - Task 'fetal_femur              ': 0.0037
+  - Task 'fetal_head               ': 0.1553
+  - Task 'fetal_head_pos_cls       ': 0.2198
+  - Task 'fetal_heart              ': 0.2217
+  - Task 'fetal_plane_cls          ': 0.1873
+  - Task 'fetal_sacral_pos_cls     ': 0.2495
+  - Task 'head_symphysis_multi     ': 0.2020
+  - Task 'liver_lesion_2cls        ': 0.1929
+  - Task 'lung                     ': 0.2959
+  - Task 'lung_2cls                ': 0.2118
+  - Task 'lung_disease_3cls        ': 0.1508
+  - Task 'organ_cls                ': 0.1609
+  - Task 'ovary_tumor              ': 0.3304
+  - Task 'spinal_cord_injury_loc   ': 0.7675
+  - Task 'thyroid_nodule           ': 0.3404
+  - Task 'thyroid_nodule_det       ': 0.9427
+  - Task 'uterine_fibroid_det      ': 1.0882
+----------------------------------------
+
+--- Epoch 9 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     16.027669       NaN       NaN      NaN      NaN
+                  IUGC     Regression     12.938055       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.729730  0.729730      NaN      NaN
+           breast_3cls classification           NaN  0.862857  0.862857      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.817890      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.859750      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.892809      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.812933      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.895720      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.774947      NaN
+           fetal_femur     Regression     31.830502       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.960305      NaN
+    fetal_head_pos_cls classification           NaN  0.834971  0.834971      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.856318      NaN
+       fetal_plane_cls classification           NaN  0.936785  0.936785      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.666667  0.666667      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.927965      NaN
+     liver_lesion_2cls classification           NaN  0.879389  0.879389      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.841427      NaN
+             lung_2cls classification           NaN  0.461538  0.461538      NaN      NaN
+     lung_disease_3cls classification           NaN  0.811024  0.811024      NaN      NaN
+             organ_cls classification           NaN  0.976744  0.976744      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.761775      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.825152
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.768759      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.683309
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.664687
+--- Average Val Score (Higher is better): 0.7907 ---
+[EarlyStopping] No improvement for 1/3 epoch(s).
+
+--- Epoch 10 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0013
+  - Task 'IUGC                     ': 0.0008
+  - Task 'breast_2cls              ': 0.1833
+  - Task 'breast_3cls              ': 0.1688
+  - Task 'breast_lesion            ': 0.2815
+  - Task 'cardiac_multi            ': 0.3261
+  - Task 'carotid_artery           ': 0.1585
+  - Task 'cervix                   ': 0.1961
+  - Task 'cervix_multi             ': 0.2681
+  - Task 'fetal_abdomen_multi      ': 0.4909
+  - Task 'fetal_femur              ': 0.0031
+  - Task 'fetal_head               ': 0.1159
+  - Task 'fetal_head_pos_cls       ': 0.1858
+  - Task 'fetal_heart              ': 0.2034
+  - Task 'fetal_plane_cls          ': 0.1847
+  - Task 'fetal_sacral_pos_cls     ': 0.1956
+  - Task 'head_symphysis_multi     ': 0.2024
+  - Task 'liver_lesion_2cls        ': 0.1912
+  - Task 'lung                     ': 0.2920
+  - Task 'lung_2cls                ': 0.1596
+  - Task 'lung_disease_3cls        ': 0.1266
+  - Task 'organ_cls                ': 0.1424
+  - Task 'ovary_tumor              ': 0.2767
+  - Task 'spinal_cord_injury_loc   ': 0.7587
+  - Task 'thyroid_nodule           ': 0.3379
+  - Task 'thyroid_nodule_det       ': 0.9158
+  - Task 'uterine_fibroid_det      ': 1.0736
+----------------------------------------
+
+--- Epoch 10 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     14.256971       NaN       NaN      NaN      NaN
+                  IUGC     Regression     11.220687       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.774775  0.774775      NaN      NaN
+           breast_3cls classification           NaN  0.851429  0.851429      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.819917      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.862231      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.904369      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.838497      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.896945      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.775110      NaN
+           fetal_femur     Regression     30.006329       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.951954      NaN
+    fetal_head_pos_cls classification           NaN  0.805501  0.805501      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.825649      NaN
+       fetal_plane_cls classification           NaN  0.858776  0.858776      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.687500  0.687500      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.920114      NaN
+     liver_lesion_2cls classification           NaN  0.883969  0.883969      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.840056      NaN
+             lung_2cls classification           NaN  0.553846  0.553846      NaN      NaN
+     lung_disease_3cls classification           NaN  0.795276  0.795276      NaN      NaN
+             organ_cls classification           NaN  0.976744  0.976744      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.777171      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.828167
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.762754      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.688732
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.669934
+--- Average Val Score (Higher is better): 0.7935 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.7935)
+
+--- Epoch 11 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0016
+  - Task 'IUGC                     ': 0.0008
+  - Task 'breast_2cls              ': 0.1536
+  - Task 'breast_3cls              ': 0.1382
+  - Task 'breast_lesion            ': 0.2833
+  - Task 'cardiac_multi            ': 0.3037
+  - Task 'carotid_artery           ': 0.1650
+  - Task 'cervix                   ': 0.1917
+  - Task 'cervix_multi             ': 0.2346
+  - Task 'fetal_abdomen_multi      ': 0.4677
+  - Task 'fetal_femur              ': 0.0029
+  - Task 'fetal_head               ': 0.1433
+  - Task 'fetal_head_pos_cls       ': 0.2186
+  - Task 'fetal_heart              ': 0.1754
+  - Task 'fetal_plane_cls          ': 0.1308
+  - Task 'fetal_sacral_pos_cls     ': 0.2206
+  - Task 'head_symphysis_multi     ': 0.1939
+  - Task 'liver_lesion_2cls        ': 0.1327
+  - Task 'lung                     ': 0.2877
+  - Task 'lung_2cls                ': 0.1492
+  - Task 'lung_disease_3cls        ': 0.1481
+  - Task 'organ_cls                ': 0.0883
+  - Task 'ovary_tumor              ': 0.2799
+  - Task 'spinal_cord_injury_loc   ': 0.7345
+  - Task 'thyroid_nodule           ': 0.3186
+  - Task 'thyroid_nodule_det       ': 0.8932
+  - Task 'uterine_fibroid_det      ': 1.0203
+----------------------------------------
+
+--- Epoch 11 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     13.667030       NaN       NaN      NaN      NaN
+                  IUGC     Regression     11.029501       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.765766  0.765766      NaN      NaN
+           breast_3cls classification           NaN  0.828571  0.828571      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.823459      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.867625      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.912688      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.827308      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.896328      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.777354      NaN
+           fetal_femur     Regression     30.786101       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.961223      NaN
+    fetal_head_pos_cls classification           NaN  0.815324  0.815324      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.856999      NaN
+       fetal_plane_cls classification           NaN  0.938803  0.938803      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.635417  0.635417      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.929179      NaN
+     liver_lesion_2cls classification           NaN  0.862595  0.862595      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.844552      NaN
+             lung_2cls classification           NaN  0.584615  0.584615      NaN      NaN
+     lung_disease_3cls classification           NaN  0.763780  0.763780      NaN      NaN
+             organ_cls classification           NaN  0.976744  0.976744      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.778307      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.826740
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.777370      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.700479
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.700497
+--- Average Val Score (Higher is better): 0.7977 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.7977)
+
+--- Epoch 12 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0014
+  - Task 'IUGC                     ': 0.0008
+  - Task 'breast_2cls              ': 0.1057
+  - Task 'breast_3cls              ': 0.1149
+  - Task 'breast_lesion            ': 0.2728
+  - Task 'cardiac_multi            ': 0.2948
+  - Task 'carotid_artery           ': 0.1383
+  - Task 'cervix                   ': 0.1739
+  - Task 'cervix_multi             ': 0.2214
+  - Task 'fetal_abdomen_multi      ': 0.4489
+  - Task 'fetal_femur              ': 0.0029
+  - Task 'fetal_head               ': 0.1031
+  - Task 'fetal_head_pos_cls       ': 0.1641
+  - Task 'fetal_heart              ': 0.1687
+  - Task 'fetal_plane_cls          ': 0.1194
+  - Task 'fetal_sacral_pos_cls     ': 0.1644
+  - Task 'head_symphysis_multi     ': 0.1801
+  - Task 'liver_lesion_2cls        ': 0.1339
+  - Task 'lung                     ': 0.2591
+  - Task 'lung_2cls                ': 0.1188
+  - Task 'lung_disease_3cls        ': 0.1014
+  - Task 'organ_cls                ': 0.0754
+  - Task 'ovary_tumor              ': 0.2289
+  - Task 'spinal_cord_injury_loc   ': 0.7252
+  - Task 'thyroid_nodule           ': 0.3027
+  - Task 'thyroid_nodule_det       ': 0.8900
+  - Task 'uterine_fibroid_det      ': 1.0432
+----------------------------------------
+
+--- Epoch 12 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     15.018530       NaN       NaN      NaN      NaN
+                  IUGC     Regression     12.568132       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.783784  0.783784      NaN      NaN
+           breast_3cls classification           NaN  0.840000  0.840000      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.812091      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.851679      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.876247      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.813398      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.901619      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.784725      NaN
+           fetal_femur     Regression     28.365554       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.965242      NaN
+    fetal_head_pos_cls classification           NaN  0.754420  0.754420      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.853144      NaN
+       fetal_plane_cls classification           NaN  0.944183  0.944183      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.635417  0.635417      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.936544      NaN
+     liver_lesion_2cls classification           NaN  0.902290  0.902290      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.844079      NaN
+             lung_2cls classification           NaN  0.630769  0.630769      NaN      NaN
+     lung_disease_3cls classification           NaN  0.795276  0.795276      NaN      NaN
+             organ_cls classification           NaN  0.976744  0.976744      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.786776      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.809884
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.772587      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.703786
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.637311
+--- Average Val Score (Higher is better): 0.7952 ---
+[EarlyStopping] No improvement for 1/3 epoch(s).
+
+--- Epoch 13 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0013
+  - Task 'IUGC                     ': 0.0007
+  - Task 'breast_2cls              ': 0.1113
+  - Task 'breast_3cls              ': 0.0976
+  - Task 'breast_lesion            ': 0.2608
+  - Task 'cardiac_multi            ': 0.2884
+  - Task 'carotid_artery           ': 0.1309
+  - Task 'cervix                   ': 0.1703
+  - Task 'cervix_multi             ': 0.2160
+  - Task 'fetal_abdomen_multi      ': 0.4239
+  - Task 'fetal_femur              ': 0.0026
+  - Task 'fetal_head               ': 0.1005
+  - Task 'fetal_head_pos_cls       ': 0.1948
+  - Task 'fetal_heart              ': 0.1475
+  - Task 'fetal_plane_cls          ': 0.1243
+  - Task 'fetal_sacral_pos_cls     ': 0.1966
+  - Task 'head_symphysis_multi     ': 0.1703
+  - Task 'liver_lesion_2cls        ': 0.1149
+  - Task 'lung                     ': 0.2482
+  - Task 'lung_2cls                ': 0.0929
+  - Task 'lung_disease_3cls        ': 0.0728
+  - Task 'organ_cls                ': 0.0796
+  - Task 'ovary_tumor              ': 0.2433
+  - Task 'spinal_cord_injury_loc   ': 0.7067
+  - Task 'thyroid_nodule           ': 0.2937
+  - Task 'thyroid_nodule_det       ': 0.8653
+  - Task 'uterine_fibroid_det      ': 1.0314
+----------------------------------------
+
+--- Epoch 13 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     15.698205       NaN       NaN      NaN      NaN
+                  IUGC     Regression     10.954155       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.774775  0.774775      NaN      NaN
+           breast_3cls classification           NaN  0.891429  0.891429      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.807482      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.861164      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.906831      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.826165      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.910690      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.791026      NaN
+           fetal_femur     Regression     31.447363       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.941950      NaN
+    fetal_head_pos_cls classification           NaN  0.829077  0.829077      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.826705      NaN
+       fetal_plane_cls classification           NaN  0.921991  0.921991      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.656250  0.656250      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.924688      NaN
+     liver_lesion_2cls classification           NaN  0.876336  0.876336      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.809075      NaN
+             lung_2cls classification           NaN  0.553846  0.553846      NaN      NaN
+     lung_disease_3cls classification           NaN  0.803150  0.803150      NaN      NaN
+             organ_cls classification           NaN  1.000000  1.000000      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.758825      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.812777
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.761584      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.707874
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.686192
+--- Average Val Score (Higher is better): 0.8008 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.8008)
+
+--- Epoch 14 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0010
+  - Task 'IUGC                     ': 0.0007
+  - Task 'breast_2cls              ': 0.1453
+  - Task 'breast_3cls              ': 0.1819
+  - Task 'breast_lesion            ': 0.2418
+  - Task 'cardiac_multi            ': 0.2841
+  - Task 'carotid_artery           ': 0.1407
+  - Task 'cervix                   ': 0.1605
+  - Task 'cervix_multi             ': 0.2194
+  - Task 'fetal_abdomen_multi      ': 0.4174
+  - Task 'fetal_femur              ': 0.0026
+  - Task 'fetal_head               ': 0.1247
+  - Task 'fetal_head_pos_cls       ': 0.1442
+  - Task 'fetal_heart              ': 0.1610
+  - Task 'fetal_plane_cls          ': 0.0886
+  - Task 'fetal_sacral_pos_cls     ': 0.1781
+  - Task 'head_symphysis_multi     ': 0.1718
+  - Task 'liver_lesion_2cls        ': 0.0918
+  - Task 'lung                     ': 0.2428
+  - Task 'lung_2cls                ': 0.0933
+  - Task 'lung_disease_3cls        ': 0.1100
+  - Task 'organ_cls                ': 0.0545
+  - Task 'ovary_tumor              ': 0.2338
+  - Task 'spinal_cord_injury_loc   ': 0.7000
+  - Task 'thyroid_nodule           ': 0.2816
+  - Task 'thyroid_nodule_det       ': 0.8530
+  - Task 'uterine_fibroid_det      ': 1.0271
+----------------------------------------
+
+--- Epoch 14 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     13.326973       NaN       NaN      NaN      NaN
+                  IUGC     Regression     10.689103       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.738739  0.738739      NaN      NaN
+           breast_3cls classification           NaN  0.845714  0.845714      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.841242      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.868532      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.896655      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.840677      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.888902      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.776765      NaN
+           fetal_femur     Regression     29.049243       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.957672      NaN
+    fetal_head_pos_cls classification           NaN  0.842829  0.842829      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.870478      NaN
+       fetal_plane_cls classification           NaN  0.933423  0.933423      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.666667  0.666667      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.925487      NaN
+     liver_lesion_2cls classification           NaN  0.894656  0.894656      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.849246      NaN
+             lung_2cls classification           NaN  0.646154  0.646154      NaN      NaN
+     lung_disease_3cls classification           NaN  0.811024  0.811024      NaN      NaN
+             organ_cls classification           NaN  0.953488  0.953488      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.782975      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.832730
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.787542      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.723919
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.698345
+--- Average Val Score (Higher is better): 0.8096 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.8096)
+
+--- Epoch 15 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0012
+  - Task 'IUGC                     ': 0.0007
+  - Task 'breast_2cls              ': 0.0814
+  - Task 'breast_3cls              ': 0.0813
+  - Task 'breast_lesion            ': 0.2306
+  - Task 'cardiac_multi            ': 0.2633
+  - Task 'carotid_artery           ': 0.1294
+  - Task 'cervix                   ': 0.1405
+  - Task 'cervix_multi             ': 0.2031
+  - Task 'fetal_abdomen_multi      ': 0.3978
+  - Task 'fetal_femur              ': 0.0025
+  - Task 'fetal_head               ': 0.1185
+  - Task 'fetal_head_pos_cls       ': 0.1344
+  - Task 'fetal_heart              ': 0.1556
+  - Task 'fetal_plane_cls          ': 0.0581
+  - Task 'fetal_sacral_pos_cls     ': 0.1210
+  - Task 'head_symphysis_multi     ': 0.1642
+  - Task 'liver_lesion_2cls        ': 0.0791
+  - Task 'lung                     ': 0.2301
+  - Task 'lung_2cls                ': 0.0696
+  - Task 'lung_disease_3cls        ': 0.0985
+  - Task 'organ_cls                ': 0.0627
+  - Task 'ovary_tumor              ': 0.2079
+  - Task 'spinal_cord_injury_loc   ': 0.6836
+  - Task 'thyroid_nodule           ': 0.2686
+  - Task 'thyroid_nodule_det       ': 0.8402
+  - Task 'uterine_fibroid_det      ': 0.9999
+----------------------------------------
+
+--- Epoch 15 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     14.496497       NaN       NaN      NaN      NaN
+                  IUGC     Regression      9.964691       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.756757  0.756757      NaN      NaN
+           breast_3cls classification           NaN  0.891429  0.891429      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.835202      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.876419      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.917373      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.846465      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.902183      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.799042      NaN
+           fetal_femur     Regression     27.785072       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.960532      NaN
+    fetal_head_pos_cls classification           NaN  0.797642  0.797642      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.880948      NaN
+       fetal_plane_cls classification           NaN  0.936113  0.936113      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.708333  0.708333      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.938590      NaN
+     liver_lesion_2cls classification           NaN  0.876336  0.876336      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.841172      NaN
+             lung_2cls classification           NaN  0.630769  0.630769      NaN      NaN
+     lung_disease_3cls classification           NaN  0.795276  0.795276      NaN      NaN
+             organ_cls classification           NaN  0.976744  0.976744      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.782161      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.817894
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.792343      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.712969
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.700350
+--- Average Val Score (Higher is better): 0.8114 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.8114)
+
+--- Epoch 16 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0011
+  - Task 'IUGC                     ': 0.0006
+  - Task 'breast_2cls              ': 0.0667
+  - Task 'breast_3cls              ': 0.0959
+  - Task 'breast_lesion            ': 0.2378
+  - Task 'cardiac_multi            ': 0.2625
+  - Task 'carotid_artery           ': 0.1200
+  - Task 'cervix                   ': 0.1452
+  - Task 'cervix_multi             ': 0.1942
+  - Task 'fetal_abdomen_multi      ': 0.3844
+  - Task 'fetal_femur              ': 0.0021
+  - Task 'fetal_head               ': 0.1058
+  - Task 'fetal_head_pos_cls       ': 0.0945
+  - Task 'fetal_heart              ': 0.1400
+  - Task 'fetal_plane_cls          ': 0.0700
+  - Task 'fetal_sacral_pos_cls     ': 0.1099
+  - Task 'head_symphysis_multi     ': 0.1607
+  - Task 'liver_lesion_2cls        ': 0.0696
+  - Task 'lung                     ': 0.2272
+  - Task 'lung_2cls                ': 0.1024
+  - Task 'lung_disease_3cls        ': 0.0806
+  - Task 'organ_cls                ': 0.0511
+  - Task 'ovary_tumor              ': 0.1957
+  - Task 'spinal_cord_injury_loc   ': 0.6836
+  - Task 'thyroid_nodule           ': 0.2554
+  - Task 'thyroid_nodule_det       ': 0.8199
+  - Task 'uterine_fibroid_det      ': 0.9888
+----------------------------------------
+
+--- Epoch 16 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     13.539543       NaN       NaN      NaN      NaN
+                  IUGC     Regression     11.047507       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.684685  0.684685      NaN      NaN
+           breast_3cls classification           NaN  0.874286  0.874286      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.807870      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.868068      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.899379      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.832065      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.905253      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.804910      NaN
+           fetal_femur     Regression     26.650011       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.961937      NaN
+    fetal_head_pos_cls classification           NaN  0.842829  0.842829      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.862828      NaN
+       fetal_plane_cls classification           NaN  0.942838  0.942838      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.645833  0.645833      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.927525      NaN
+     liver_lesion_2cls classification           NaN  0.894656  0.894656      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.848339      NaN
+             lung_2cls classification           NaN  0.615385  0.615385      NaN      NaN
+     lung_disease_3cls classification           NaN  0.779528  0.779528      NaN      NaN
+             organ_cls classification           NaN  0.953488  0.953488      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.787148      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.819401
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.783547      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.685821
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.692243
+--- Average Val Score (Higher is better): 0.7993 ---
+[EarlyStopping] No improvement for 1/3 epoch(s).
+
+--- Epoch 17 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0013
+  - Task 'IUGC                     ': 0.0006
+  - Task 'breast_2cls              ': 0.0686
+  - Task 'breast_3cls              ': 0.0772
+  - Task 'breast_lesion            ': 0.2111
+  - Task 'cardiac_multi            ': 0.2459
+  - Task 'carotid_artery           ': 0.1171
+  - Task 'cervix                   ': 0.1417
+  - Task 'cervix_multi             ': 0.1824
+  - Task 'fetal_abdomen_multi      ': 0.3706
+  - Task 'fetal_femur              ': 0.0021
+  - Task 'fetal_head               ': 0.0906
+  - Task 'fetal_head_pos_cls       ': 0.0888
+  - Task 'fetal_heart              ': 0.1534
+  - Task 'fetal_plane_cls          ': 0.0636
+  - Task 'fetal_sacral_pos_cls     ': 0.1700
+  - Task 'head_symphysis_multi     ': 0.1561
+  - Task 'liver_lesion_2cls        ': 0.0546
+  - Task 'lung                     ': 0.2120
+  - Task 'lung_2cls                ': 0.0441
+  - Task 'lung_disease_3cls        ': 0.0721
+  - Task 'organ_cls                ': 0.0353
+  - Task 'ovary_tumor              ': 0.1947
+  - Task 'spinal_cord_injury_loc   ': 0.6704
+  - Task 'thyroid_nodule           ': 0.2307
+  - Task 'thyroid_nodule_det       ': 0.8132
+  - Task 'uterine_fibroid_det      ': 0.9945
+----------------------------------------
+
+--- Epoch 17 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     13.159733       NaN       NaN      NaN      NaN
+                  IUGC     Regression      9.747898       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.828829  0.828829      NaN      NaN
+           breast_3cls classification           NaN  0.857143  0.857143      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.837212      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.876006      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.905869      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.853978      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.899505      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.807604      NaN
+           fetal_femur     Regression     30.099879       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.960069      NaN
+    fetal_head_pos_cls classification           NaN  0.852652  0.852652      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.880685      NaN
+       fetal_plane_cls classification           NaN  0.932751  0.932751      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.708333  0.708333      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.943478      NaN
+     liver_lesion_2cls classification           NaN  0.894656  0.894656      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.853905      NaN
+             lung_2cls classification           NaN  0.600000  0.600000      NaN      NaN
+     lung_disease_3cls classification           NaN  0.787402  0.787402      NaN      NaN
+             organ_cls classification           NaN  1.000000  1.000000      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.789901      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.837726
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.788904      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.714247
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.710457
+--- Average Val Score (Higher is better): 0.8197 ---
+[Checkpoint] New best saved: outputs/best_model.pth (best_score=0.8197)
+
+--- Epoch 18 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0012
+  - Task 'IUGC                     ': 0.0006
+  - Task 'breast_2cls              ': 0.0450
+  - Task 'breast_3cls              ': 0.0781
+  - Task 'breast_lesion            ': 0.2063
+  - Task 'cardiac_multi            ': 0.2394
+  - Task 'carotid_artery           ': 0.1152
+  - Task 'cervix                   ': 0.1342
+  - Task 'cervix_multi             ': 0.1731
+  - Task 'fetal_abdomen_multi      ': 0.3654
+  - Task 'fetal_femur              ': 0.0016
+  - Task 'fetal_head               ': 0.1057
+  - Task 'fetal_head_pos_cls       ': 0.0883
+  - Task 'fetal_heart              ': 0.1346
+  - Task 'fetal_plane_cls          ': 0.0527
+  - Task 'fetal_sacral_pos_cls     ': 0.1093
+  - Task 'head_symphysis_multi     ': 0.1454
+  - Task 'liver_lesion_2cls        ': 0.0399
+  - Task 'lung                     ': 0.2081
+  - Task 'lung_2cls                ': 0.0392
+  - Task 'lung_disease_3cls        ': 0.0424
+  - Task 'organ_cls                ': 0.0314
+  - Task 'ovary_tumor              ': 0.1861
+  - Task 'spinal_cord_injury_loc   ': 0.6646
+  - Task 'thyroid_nodule           ': 0.2337
+  - Task 'thyroid_nodule_det       ': 0.8170
+  - Task 'uterine_fibroid_det      ': 1.0003
+----------------------------------------
+
+--- Epoch 18 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     14.640341       NaN       NaN      NaN      NaN
+                  IUGC     Regression      9.877003       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.810811  0.810811      NaN      NaN
+           breast_3cls classification           NaN  0.857143  0.857143      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.833381      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.866820      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.891536      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.867497      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.910724      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.808580      NaN
+           fetal_femur     Regression     25.723306       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.960810      NaN
+    fetal_head_pos_cls classification           NaN  0.827112  0.827112      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.860670      NaN
+       fetal_plane_cls classification           NaN  0.920646  0.920646      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.697917  0.697917      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.933979      NaN
+     liver_lesion_2cls classification           NaN  0.917557  0.917557      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.850832      NaN
+             lung_2cls classification           NaN  0.630769  0.630769      NaN      NaN
+     lung_disease_3cls classification           NaN  0.818898  0.818898      NaN      NaN
+             organ_cls classification           NaN  0.953488  0.953488      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.788350      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.826312
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.785287      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.691433
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.691590
+--- Average Val Score (Higher is better): 0.8129 ---
+[EarlyStopping] No improvement for 1/3 epoch(s).
+
+--- Epoch 19 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0009
+  - Task 'IUGC                     ': 0.0006
+  - Task 'breast_2cls              ': 0.0942
+  - Task 'breast_3cls              ': 0.0593
+  - Task 'breast_lesion            ': 0.2005
+  - Task 'cardiac_multi            ': 0.2276
+  - Task 'carotid_artery           ': 0.1078
+  - Task 'cervix                   ': 0.1355
+  - Task 'cervix_multi             ': 0.1730
+  - Task 'fetal_abdomen_multi      ': 0.3530
+  - Task 'fetal_femur              ': 0.0014
+  - Task 'fetal_head               ': 0.0888
+  - Task 'fetal_head_pos_cls       ': 0.0830
+  - Task 'fetal_heart              ': 0.1197
+  - Task 'fetal_plane_cls          ': 0.0479
+  - Task 'fetal_sacral_pos_cls     ': 0.0906
+  - Task 'head_symphysis_multi     ': 0.1440
+  - Task 'liver_lesion_2cls        ': 0.0608
+  - Task 'lung                     ': 0.1997
+  - Task 'lung_2cls                ': 0.0356
+  - Task 'lung_disease_3cls        ': 0.0289
+  - Task 'organ_cls                ': 0.0336
+  - Task 'ovary_tumor              ': 0.1752
+  - Task 'spinal_cord_injury_loc   ': 0.6497
+  - Task 'thyroid_nodule           ': 0.2331
+  - Task 'thyroid_nodule_det       ': 0.7996
+  - Task 'uterine_fibroid_det      ': 0.9993
+----------------------------------------
+
+--- Epoch 19 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     11.399050       NaN       NaN      NaN      NaN
+                  IUGC     Regression      9.770384       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.792793  0.792793      NaN      NaN
+           breast_3cls classification           NaN  0.862857  0.862857      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.830761      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.871282      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.905352      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.853339      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.912608      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.811435      NaN
+           fetal_femur     Regression     26.002088       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.963964      NaN
+    fetal_head_pos_cls classification           NaN  0.854617  0.854617      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.866994      NaN
+       fetal_plane_cls classification           NaN  0.940820  0.940820      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.656250  0.656250      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.939404      NaN
+     liver_lesion_2cls classification           NaN  0.900763  0.900763      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.845758      NaN
+             lung_2cls classification           NaN  0.646154  0.646154      NaN      NaN
+     lung_disease_3cls classification           NaN  0.787402  0.787402      NaN      NaN
+             organ_cls classification           NaN  1.000000  1.000000      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.785540      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.823032
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.787732      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.694139
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.662983
+--- Average Val Score (Higher is better): 0.8112 ---
+[EarlyStopping] No improvement for 2/3 epoch(s).
+
+--- Epoch 20 Average Train Loss Report ---
+  - Task 'FUGC                     ': 0.0009
+  - Task 'IUGC                     ': 0.0006
+  - Task 'breast_2cls              ': 0.0745
+  - Task 'breast_3cls              ': 0.0610
+  - Task 'breast_lesion            ': 0.1963
+  - Task 'cardiac_multi            ': 0.2203
+  - Task 'carotid_artery           ': 0.1099
+  - Task 'cervix                   ': 0.1355
+  - Task 'cervix_multi             ': 0.1765
+  - Task 'fetal_abdomen_multi      ': 0.3460
+  - Task 'fetal_femur              ': 0.0016
+  - Task 'fetal_head               ': 0.0863
+  - Task 'fetal_head_pos_cls       ': 0.0744
+  - Task 'fetal_heart              ': 0.1178
+  - Task 'fetal_plane_cls          ': 0.0568
+  - Task 'fetal_sacral_pos_cls     ': 0.0952
+  - Task 'head_symphysis_multi     ': 0.1463
+  - Task 'liver_lesion_2cls        ': 0.0462
+  - Task 'lung                     ': 0.1914
+  - Task 'lung_2cls                ': 0.0347
+  - Task 'lung_disease_3cls        ': 0.0337
+  - Task 'organ_cls                ': 0.0412
+  - Task 'ovary_tumor              ': 0.1808
+  - Task 'spinal_cord_injury_loc   ': 0.6352
+  - Task 'thyroid_nodule           ': 0.2240
+  - Task 'thyroid_nodule_det       ': 0.7786
+  - Task 'uterine_fibroid_det      ': 0.9772
+----------------------------------------
+
+--- Epoch 20 Validation Report ---
+               Task ID      Task Name  MAE (pixels)  Accuracy  F1-Score     Dice      IoU
+                  FUGC     Regression     11.038555       NaN       NaN      NaN      NaN
+                  IUGC     Regression     10.807141       NaN       NaN      NaN      NaN
+           breast_2cls classification           NaN  0.729730  0.729730      NaN      NaN
+           breast_3cls classification           NaN  0.862857  0.862857      NaN      NaN
+         breast_lesion   segmentation           NaN       NaN       NaN 0.845540      NaN
+         cardiac_multi   segmentation           NaN       NaN       NaN 0.881851      NaN
+        carotid_artery   segmentation           NaN       NaN       NaN 0.918909      NaN
+                cervix   segmentation           NaN       NaN       NaN 0.862079      NaN
+          cervix_multi   segmentation           NaN       NaN       NaN 0.912811      NaN
+   fetal_abdomen_multi   segmentation           NaN       NaN       NaN 0.806949      NaN
+           fetal_femur     Regression     27.466991       NaN       NaN      NaN      NaN
+            fetal_head   segmentation           NaN       NaN       NaN 0.965874      NaN
+    fetal_head_pos_cls classification           NaN  0.862475  0.862475      NaN      NaN
+           fetal_heart   segmentation           NaN       NaN       NaN 0.889320      NaN
+       fetal_plane_cls classification           NaN  0.942165  0.942165      NaN      NaN
+  fetal_sacral_pos_cls classification           NaN  0.666667  0.666667      NaN      NaN
+  head_symphysis_multi   segmentation           NaN       NaN       NaN 0.941537      NaN
+     liver_lesion_2cls classification           NaN  0.905344  0.905344      NaN      NaN
+                  lung   segmentation           NaN       NaN       NaN 0.855320      NaN
+             lung_2cls classification           NaN  0.492308  0.492308      NaN      NaN
+     lung_disease_3cls classification           NaN  0.818898  0.818898      NaN      NaN
+             organ_cls classification           NaN  0.976744  0.976744      NaN      NaN
+           ovary_tumor   segmentation           NaN       NaN       NaN 0.792214      NaN
+spinal_cord_injury_loc      detection           NaN       NaN       NaN      NaN 0.830701
+        thyroid_nodule   segmentation           NaN       NaN       NaN 0.794257      NaN
+    thyroid_nodule_det      detection           NaN       NaN       NaN      NaN 0.724766
+   uterine_fibroid_det      detection           NaN       NaN       NaN      NaN 0.711724
+--- Average Val Score (Higher is better): 0.8102 ---
+[EarlyStopping] No improvement for 3/3 epoch(s).
+[EarlyStopping] Patience 3 reached. Stopping training.

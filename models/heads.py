@@ -136,6 +136,41 @@ class ConvGNAct(nn.Module):
         return self.act(x)
 
 
+class UpFuseBlockV1(nn.Module):
+    def __init__(self, ch: int):
+        super().__init__()
+        self.refine = nn.Sequential(ConvGNAct(ch, ch, 3, 1, 1), ConvGNAct(ch, ch, 3, 1, 1))
+
+    def forward(self, x: torch.Tensor, skip: torch.Tensor) -> torch.Tensor:
+        x = F.interpolate(x, size=skip.shape[-2:], mode="bilinear", align_corners=False)
+        if x.dtype != skip.dtype:
+            x = x.to(dtype=skip.dtype)
+        x = x + skip
+        return self.refine(x)
+
+
+class SegmentationHeadV1(nn.Module):
+    def __init__(self, fpn_dim: int, max_classes: int = 5, dropout: float = 0.10):
+        super().__init__()
+        self.max_classes = int(max_classes)
+        self.drop = nn.Dropout2d(float(dropout))
+        self.p5_proj = nn.Sequential(ConvGNAct(fpn_dim, fpn_dim), ConvGNAct(fpn_dim, fpn_dim))
+        self.up4 = UpFuseBlockV1(fpn_dim)
+        self.up3 = UpFuseBlockV1(fpn_dim)
+        self.up2 = UpFuseBlockV1(fpn_dim)
+        self.classifier = SafeConv2d(fpn_dim, self.max_classes, k=1, s=1, p=0, bias=True)
+
+    def forward(self, fpn_feats: List[torch.Tensor], out_size: Tuple[int, int]) -> torch.Tensor:
+        p2, p3, p4, p5 = fpn_feats
+        x = self.p5_proj(p5)
+        x = self.up4(x, p4)
+        x = self.up3(x, p3)
+        x = self.up2(x, p2)
+        x = self.drop(x)
+        logits_low = self.classifier(x)
+        return F.interpolate(logits_low, size=out_size, mode="bilinear", align_corners=False)
+
+
 class ResBlock(nn.Module):
     def __init__(self, ch: int, groups: int = 32):
         super().__init__()
@@ -263,16 +298,6 @@ class SegmentationHead(nn.Module):
         return F.interpolate(logits, size=out_size, mode="bilinear", align_corners=False)
 
 
-class GEGLU(nn.Module):
-    def __init__(self, in_dim: int, hidden: int):
-        super().__init__()
-        self.proj = SafeLinear(in_dim, hidden * 2)
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        a, b = self.proj(x).chunk(2, dim=-1)
-        return a * F.gelu(b)
-
-
 class GatedMLP(nn.Module):
     def __init__(self, hidden: int, dropout: float):
         super().__init__()
@@ -314,6 +339,25 @@ class ClassificationHead(nn.Module):
         x = self.block2(x)
         x = self.out_ln(x)
         return self.out_fc(x)
+
+
+class RegressionHeadV1(nn.Module):
+    def __init__(self, max_dim: int, hidden: int = 1024, dropout: float = 0.10):
+        super().__init__()
+        self.max_dim = int(max_dim)
+        self.hidden = int(hidden)
+        self.dropout = float(dropout)
+        self.fc1 = DynLinear(self.hidden)
+        self.ln1 = SafeLayerNorm(self.hidden)
+        self.fc2 = SafeLinear(self.hidden, self.max_dim)
+        self.drop = nn.Dropout(self.dropout)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        x = self.fc1(x)
+        x = self.ln1(x)
+        x = F.gelu(x)
+        x = self.drop(x)
+        return self.fc2(x)
 
 
 class RegressionHead(nn.Module):
