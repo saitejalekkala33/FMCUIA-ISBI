@@ -13,6 +13,10 @@ New Dataset Task Released – Update Your Training Pipeline
   Download: Please download the new dataset files from the following link: https://pan.baidu.com/s/1NNCZLkr8V0Txso669evXnw?pwd=1eqp Or https://drive.google.com/file/d/18oU6FraMa3ybs_XmQhDNrZESRorbGqaG/view?usp=sharing
 
 
+## Current Best Model (Avg val - 81.9): 
+
+Drive link: https://drive.google.com/file/d/1LkuSK607aj5dYwq58UU1yi8NK9BwCe71/view?usp=drive_link
+
 
 ## 📋 Table of Contents
 
